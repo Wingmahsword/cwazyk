@@ -141,12 +141,17 @@ export default function Home() {
               onClick={(e) => e.stopPropagation()}
             >
               <video 
-                src={previewUrl} 
+                src={`${previewUrl}#t=0,15`} 
                 controls 
                 autoPlay 
-                muted
                 playsInline
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                onTimeUpdate={(e) => {
+                  if (e.currentTarget.currentTime >= 15) {
+                    e.currentTarget.pause();
+                    setPreviewUrl(null);
+                  }
+                }}
               />
               <button 
                 onClick={() => setPreviewUrl(null)}
