@@ -82,14 +82,14 @@ export default function Home() {
             vps_score: 92, 
             title: "The Hidden Truth About Coding", 
             duration_seconds: 34,
-            video_url: "https://v.ftcdn.net/06/15/45/70/700_F_615457018_Y2P5iV5nJvVqB6Z7G9oA5rJ6U2fXoGzU_ST.mp4" 
+            video_url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" 
           },
           { 
             reel_id: 2, 
             vps_score: 84, 
             title: "3 Tips for Viral Content", 
             duration_seconds: 41,
-            video_url: "https://v.ftcdn.net/06/15/45/70/700_F_615457018_Y2P5iV5nJvVqB6Z7G9oA5rJ6U2fXoGzU_ST.mp4" 
+            video_url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" 
           }
         ]
       });
@@ -270,14 +270,50 @@ export default function Home() {
         )}
       </section>
 
-      <footer style={{ display: 'flex', justifyContent: 'center', gap: '40px', color: '#444', fontSize: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Terminal size={14} />
-          <span>Local Process: Ready</span>
+      {/* SEO Section: Features & How it Works */}
+      <section style={{ marginTop: '100px', textAlign: 'left', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '40px' }}>
+        <div>
+          <h3 style={{ color: 'var(--primary)', marginBottom: '16px', fontSize: '1.2rem' }}>AI Emotion Analysis</h3>
+          <p style={{ color: '#888', lineHeight: '1.6' }}>Our alchemists use Hume AI to detect high-dopamine moments, ensuring your reels hit the emotional peaks that drive virality.</p>
         </div>
         <div>
-          Code Cleaned & Handcrafted
+          <h3 style={{ color: 'var(--accent)', marginBottom: '16px', fontSize: '1.2rem' }}>Auto-Dynamic Captions</h3>
+          <p style={{ color: '#888', lineHeight: '1.6' }}>Burned-in, word-synced subtitles with keyword highlighting. Optimized for sound-off scrolling on Instagram and TikTok.</p>
         </div>
+        <div>
+          <h3 style={{ color: 'var(--success)', marginBottom: '16px', fontSize: '1.2rem' }}>Vertical 9:16 Reframing</h3>
+          <p style={{ color: '#888', lineHeight: '1.6' }}>Automatic face-tracking and horizontal-to-vertical conversion. No more manual cropping or lost focus.</p>
+        </div>
+      </section>
+
+      <section style={{ marginTop: '100px', borderTop: '1px solid var(--glass-border)', paddingTop: '60px' }}>
+        <h2 style={{ fontSize: '2rem', marginBottom: '32px' }}>Why use the Viral Lab?</h2>
+        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'left' }}>
+          <div style={{ marginBottom: '24px' }}>
+            <h4 style={{ color: '#fff', marginBottom: '8px' }}>Is this free video to reel converter really free?</h4>
+            <p style={{ color: '#888' }}>Yes! The Viral Lab is built to empower creators to transmute their content without expensive subscription fees.</p>
+          </div>
+          <div style={{ marginBottom: '24px' }}>
+            <h4 style={{ color: '#fff', marginBottom: '8px' }}>How does the AI choose viral segments?</h4>
+            <p style={{ color: '#888' }}>We analyze audio sentiment, facial expressions, and visual energy to find "hooks" and "value bombs" that the algorithm loves.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer style={{ marginTop: '100px', paddingBottom: '40px', borderTop: '1px solid var(--glass-border)', paddingTop: '40px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '40px', color: '#444', fontSize: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Terminal size={14} />
+            <span>Local Alchemist Process: Ready</span>
+          </div>
+          <div>
+            Powered by <strong>Antigravity Engine</strong>
+          </div>
+        </div>
+        <p style={{ fontSize: '11px', color: '#333', maxWidth: '600px' }}>
+          Viral Lab is the premier AI Reel Maker for creators. Convert YouTube to Reels, Video to TikToks, and long-form to Shorts instantly. 
+          The alchemists are not responsible for sudden spikes in follower counts.
+        </p>
       </footer>
     </main>
   );
