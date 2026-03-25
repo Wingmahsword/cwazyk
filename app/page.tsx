@@ -82,14 +82,14 @@ export default function Home() {
             vps_score: 92, 
             title: "The Hidden Truth About Coding", 
             duration_seconds: 34,
-            video_url: "https://videos.pexels.com/video-files/3209211/3209211-uhd_2160_3840_25fps.mp4" 
+            video_url: "https://v.ftcdn.net/06/15/45/70/700_F_615457018_Y2P5iV5nJvVqB6Z7G9oA5rJ6U2fXoGzU_ST.mp4" 
           },
           { 
             reel_id: 2, 
             vps_score: 84, 
             title: "3 Tips for Viral Content", 
             duration_seconds: 41,
-            video_url: "https://videos.pexels.com/video-files/3209211/3209211-uhd_2160_3840_25fps.mp4" 
+            video_url: "https://v.ftcdn.net/06/15/45/70/700_F_615457018_Y2P5iV5nJvVqB6Z7G9oA5rJ6U2fXoGzU_ST.mp4" 
           }
         ]
       });
@@ -144,6 +144,8 @@ export default function Home() {
                 src={previewUrl} 
                 controls 
                 autoPlay 
+                muted
+                playsInline
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
               />
               <button 
