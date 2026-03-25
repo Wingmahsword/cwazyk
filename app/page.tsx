@@ -20,6 +20,7 @@ interface ReelResult {
   vps_score: number;
   title: string;
   duration_seconds: number;
+  video_url: string;
 }
 
 interface ProcessResult {
@@ -33,6 +34,7 @@ export default function Home() {
   const [msgIdx, setMsgIdx] = useState(0);
   const [result, setResult] = useState<ProcessResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -59,7 +61,6 @@ export default function Home() {
     setResult(null);
 
     try {
-      // 1. Call the API Bridge
       const response = await fetch("/api/process", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -68,17 +69,28 @@ export default function Home() {
 
       if (!response.ok) throw new Error("Backend alchemist is unavailable");
 
-      // 2. Simulated "manifestation" delay since local processing takes time
       const steps = [15, 30, 55, 75, 95, 100];
       for (const p of steps) {
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise(r => setTimeout(r, 1500));
         setProgress(p);
       }
 
       setResult({
         reels: [
-          { reel_id: 1, vps_score: 92, title: "The Hidden Truth About Coding", duration_seconds: 34 },
-          { reel_id: 2, vps_score: 84, title: "3 Tips for Viral Content", duration_seconds: 41 }
+          { 
+            reel_id: 1, 
+            vps_score: 92, 
+            title: "The Hidden Truth About Coding", 
+            duration_seconds: 34,
+            video_url: "https://videos.pexels.com/video-files/3209211/3209211-uhd_2160_3840_25fps.mp4" 
+          },
+          { 
+            reel_id: 2, 
+            vps_score: 84, 
+            title: "3 Tips for Viral Content", 
+            duration_seconds: 41,
+            video_url: "https://videos.pexels.com/video-files/3209211/3209211-uhd_2160_3840_25fps.mp4" 
+          }
         ]
       });
       setIsCooking(false);
@@ -90,6 +102,39 @@ export default function Home() {
 
   return (
     <main style={{ padding: '80px 20px', maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
+      {/* Video Preview Modal */}
+      <AnimatePresence>
+        {previewUrl && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.9)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+            onClick={() => setPreviewUrl(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              style={{ width: '100%', maxWidth: '400px', aspectRatio: '9/16', background: '#000', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 0 50px rgba(0,0,0,0.5)', position: 'relative' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <video 
+                src={previewUrl} 
+                controls 
+                autoPlay 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+              />
+              <button 
+                onClick={() => setPreviewUrl(null)}
+                style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', zIndex: 101 }}
+              >
+                ✕
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <header style={{ marginBottom: '60px' }}>
         <div style={{ display: 'inline-block', padding: '4px 12px', background: 'var(--primary-glow)', borderRadius: '20px', color: 'var(--primary)', fontWeight: 'bold', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '16px' }}>
           Manifesting Viral Gold
@@ -179,7 +224,11 @@ export default function Home() {
                   </div>
                   <h3 style={{ fontSize: '1rem', marginBottom: '16px' }}>{reel.title}</h3>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button className="glow-btn" style={{ flex: 1, justifyContent: 'center', padding: '8px', fontSize: '14px' }}>
+                    <button 
+                      className="glow-btn" 
+                      style={{ flex: 1, justifyContent: 'center', padding: '8px', fontSize: '14px' }}
+                      onClick={() => setPreviewUrl(reel.video_url)}
+                    >
                       <Play size={14} fill="white" />
                       Preview
                     </button>
