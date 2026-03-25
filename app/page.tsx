@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Upload, Zap, Flame, Terminal, Play, CheckCircle2, AlertCircle } from "lucide-react";
+import { Zap, Flame, Terminal, Play, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const QUIRKY_MESSAGES = [
@@ -20,7 +20,7 @@ interface ReelResult {
   vps_score: number;
   title: string;
   duration_seconds: number;
-  video_url: string;
+  video_id: string; // Using YouTube ID for speed
 }
 
 interface ProcessResult {
@@ -34,7 +34,7 @@ export default function Home() {
   const [msgIdx, setMsgIdx] = useState(0);
   const [result, setResult] = useState<ProcessResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewId, setPreviewId] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -69,9 +69,9 @@ export default function Home() {
 
       if (!response.ok) throw new Error("Backend alchemist is unavailable");
 
-      const steps = [15, 30, 55, 75, 95, 100];
+      const steps = [20, 45, 75, 95, 100];
       for (const p of steps) {
-        await new Promise(r => setTimeout(r, 1500));
+        await new Promise(r => setTimeout(r, 800)); // Faster simulation
         setProgress(p);
       }
 
@@ -79,17 +79,17 @@ export default function Home() {
         reels: [
           { 
             reel_id: 1, 
-            vps_score: 92, 
-            title: "The Hidden Truth About Coding", 
-            duration_seconds: 34,
-            video_url: "/rickroll.mp4" 
+            vps_score: 98, 
+            title: "The Ultimate Rickroll Manifestation", 
+            duration_seconds: 15,
+            video_id: "dQw4w9WgXcQ" 
           },
           { 
             reel_id: 2, 
-            vps_score: 84, 
-            title: "3 Tips for Viral Content", 
-            duration_seconds: 41,
-            video_url: "/rickroll.mp4" 
+            vps_score: 89, 
+            title: "Viral Gold: Never Gonna Give You Up", 
+            duration_seconds: 15,
+            video_id: "dQw4w9WgXcQ" 
           }
         ]
       });
@@ -101,61 +101,37 @@ export default function Home() {
   };
 
   return (
-    <main style={{ padding: '80px 20px', maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
-      {/* Video Preview Modal */}
+    <main style={{ padding: '40px 20px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+      {/* Seamless Video Preview Modal */}
       <AnimatePresence>
-        {previewUrl && (
+        {previewId && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ 
-              position: 'fixed' as 'fixed', 
-              top: 0, 
-              left: 0, 
-              width: '100%', 
-              height: '100%', 
-              background: 'rgba(0,0,0,0.9)', 
-              zIndex: 100, 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              padding: '20px' 
-            }}
-            onClick={() => setPreviewUrl(null)}
+            style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.95)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+            onClick={() => setPreviewId(null)}
           >
             <motion.div 
-              initial={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.9, y: 30 }}
               animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              style={{ 
-                width: '100%', 
-                maxWidth: '400px', 
-                aspectRatio: '9/16', 
-                background: '#000', 
-                borderRadius: '24px', 
-                overflow: 'hidden', 
-                boxShadow: '0 0 50px rgba(0,0,0,0.5)', 
-                position: 'relative' as 'relative' 
-              }}
+              exit={{ scale: 0.9, y: 30 }}
+              style={{ width: '100%', maxWidth: '400px', aspectRatio: '9/16', background: '#000', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 0 50px rgba(0,0,0,0.8)', position: 'relative' as 'relative' }}
               onClick={(e) => e.stopPropagation()}
             >
-              <video 
-                src={`${previewUrl}#t=0,15`} 
-                controls 
-                autoPlay 
-                playsInline
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                onTimeUpdate={(e) => {
-                  if (e.currentTarget.currentTime >= 15) {
-                    e.currentTarget.pause();
-                    setPreviewUrl(null);
-                  }
-                }}
-              />
+              <iframe 
+                width="100%" 
+                height="100%" 
+                src={`https://www.youtube.com/embed/${previewId}?autoplay=1&controls=0&start=0&end=15`} 
+                title="Rickroll Preview"
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+                style={{ border: 'none' }}
+              ></iframe>
               <button 
-                onClick={() => setPreviewUrl(null)}
-                style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', zIndex: 101 }}
+                onClick={() => setPreviewId(null)}
+                style={{ position: 'absolute', top: '15px', right: '15px', background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', zIndex: 101, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 ✕
               </button>
@@ -163,72 +139,53 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
-      <header style={{ marginBottom: '60px' }}>
-        <div style={{ display: 'inline-block', padding: '4px 12px', background: 'var(--primary-glow)', borderRadius: '20px', color: 'var(--primary)', fontWeight: 'bold', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '16px' }}>
-          Manifesting Viral Gold
-        </div>
-        <h1 className="lab-title">Viral Lab</h1>
-        <p style={{ color: '#888', fontSize: '1.25rem', fontWeight: 500 }}>
-          Transmute low-retention footage into <span style={{ color: 'var(--accent)' }}>Viral Gold</span>.
+
+      <header style={{ marginBottom: '40px' }}>
+        <h1 className="lab-title" style={{ fontSize: '2.5rem' }}>Viral Lab</h1>
+        <p style={{ color: '#666', fontSize: '1.1rem' }}>
+          Minimalist Alchemist Dashboard.
         </p>
       </header>
 
-      <section className="glass" style={{ padding: '48px', marginBottom: '40px' }}>
+      <section className="glass" style={{ padding: '32px', marginBottom: '40px' }}>
         {error && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '12px', borderRadius: '12px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-            <AlertCircle size={18} />
+          <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '12px', borderRadius: '12px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '14px' }}>
+            <AlertCircle size={16} />
             {error}
           </div>
         )}
 
         {!isCooking && !result && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div style={{ marginBottom: '32px' }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                <Upload size={24} color="#888" />
-              </div>
-              <p style={{ color: '#aaa' }}>Paste a YouTube URL or drop your MP4</p>
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
               <input 
                 type="text" 
                 className="input-alchemist" 
-                placeholder="https://youtube.com/watch?v=..." 
+                placeholder="Paste URL..." 
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
               />
               <button className="glow-btn" onClick={startCooking}>
-                <Zap size={20} fill="white" />
-                Cook Reel
+                <Zap size={18} fill="white" />
+                Cook
               </button>
             </div>
-            <p style={{ fontSize: '12px', color: '#555' }}>Supports .MP4, .MOV, .AVI up to 2GB</p>
           </motion.div>
         )}
 
         {isCooking && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-              <div className="animate-pulse-slow">
-                <Flame size={48} color="var(--accent)" />
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <Flame size={32} color="var(--accent)" className="animate-pulse-slow" />
             </div>
-            
-            <h2 style={{ fontSize: '1.5rem', marginBottom: '8px' }}>Alchemy in progress...</h2>
-            <p style={{ color: '#888', marginBottom: '24px' }}>Stay calm. The pixels are being rearranged.</p>
-
-            <div className="progress-container">
+            <div className="progress-container" style={{ margin: '0 auto', maxWidth: '300px' }}>
               <div className="progress-bar" style={{ width: `${progress}%` }} />
             </div>
-
             <AnimatePresence mode="wait">
               <motion.div 
                 key={msgIdx}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="quirky-status"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                style={{ marginTop: '16px', fontSize: '12px', color: '#666', fontStyle: 'italic' }}
               >
                 {QUIRKY_MESSAGES[msgIdx]}
               </motion.div>
@@ -237,88 +194,48 @@ export default function Home() {
         )}
 
         {result && (
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-            <div style={{ color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '24px' }}>
-               <CheckCircle2 color="var(--success)" />
-               <span style={{ fontWeight: 'bold' }}>Reels Manifested!</span>
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+            <div style={{ color: 'var(--success)', fontSize: '14px', fontWeight: 'bold', marginBottom: '20px' }}>
+               Manifested!
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
               {result.reels.map((reel) => (
-                <div key={reel.reel_id} className="glass" style={{ padding: '20px', textAlign: 'left', background: 'rgba(0,0,0,0.2)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '12px', color: '#888' }}>Reel #{reel.reel_id}</span>
-                    <span style={{ fontSize: '12px', background: 'var(--accent)', padding: '2px 8px', borderRadius: '10px' }}>VPS: {reel.vps_score}</span>
+                <div key={reel.reel_id} className="glass" style={{ padding: '16px', textAlign: 'left', background: 'rgba(0,0,0,0.3)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '10px', color: '#666' }}>VPS: {reel.vps_score}</span>
                   </div>
-                  <h3 style={{ fontSize: '1rem', marginBottom: '16px' }}>{reel.title}</h3>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button 
-                      className="glow-btn" 
-                      style={{ flex: 1, justifyContent: 'center', padding: '8px', fontSize: '14px' }}
-                      onClick={() => setPreviewUrl(reel.video_url)}
-                    >
-                      <Play size={14} fill="white" />
-                      Preview
-                    </button>
-                  </div>
+                  <h3 style={{ fontSize: '0.9rem', marginBottom: '12px' }}>{reel.title}</h3>
+                  <button 
+                    className="glow-btn" 
+                    style={{ width: '100%', justifyContent: 'center', padding: '6px', fontSize: '12px' }}
+                    onClick={() => setPreviewId(reel.video_id)}
+                  >
+                    <Play size={12} fill="white" />
+                    Preview
+                  </button>
                 </div>
               ))}
             </div>
 
             <button 
-              style={{ marginTop: '32px', background: 'none', border: 'none', color: '#888', cursor: 'pointer', textDecoration: 'underline' }}
+              style={{ marginTop: '24px', background: 'none', border: 'none', color: '#444', cursor: 'pointer', textDecoration: 'underline', fontSize: '12px' }}
               onClick={() => setResult(null)}
             >
-              Start New Batch
+              Reset Lab
             </button>
           </motion.div>
         )}
       </section>
 
-      {/* SEO Section: Features & How it Works */}
-      <section style={{ marginTop: '100px', textAlign: 'left', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '40px' }}>
-        <div>
-          <h3 style={{ color: 'var(--primary)', marginBottom: '16px', fontSize: '1.2rem' }}>AI Emotion Analysis</h3>
-          <p style={{ color: '#888', lineHeight: '1.6' }}>Our alchemists use Hume AI to detect high-dopamine moments, ensuring your reels hit the emotional peaks that drive virality.</p>
+      <footer style={{ display: 'flex', justifyContent: 'center', gap: '20px', color: '#333', fontSize: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Terminal size={12} />
+          <span>Operational</span>
         </div>
         <div>
-          <h3 style={{ color: 'var(--accent)', marginBottom: '16px', fontSize: '1.2rem' }}>Auto-Dynamic Captions</h3>
-          <p style={{ color: '#888', lineHeight: '1.6' }}>Burned-in, word-synced subtitles with keyword highlighting. Optimized for sound-off scrolling on Instagram and TikTok.</p>
+          Minimalist Alchemist v2.1
         </div>
-        <div>
-          <h3 style={{ color: 'var(--success)', marginBottom: '16px', fontSize: '1.2rem' }}>Vertical 9:16 Reframing</h3>
-          <p style={{ color: '#888', lineHeight: '1.6' }}>Automatic face-tracking and horizontal-to-vertical conversion. No more manual cropping or lost focus.</p>
-        </div>
-      </section>
-
-      <section style={{ marginTop: '100px', borderTop: '1px solid var(--glass-border)', paddingTop: '60px' }}>
-        <h2 style={{ fontSize: '2rem', marginBottom: '32px' }}>Why use the Viral Lab?</h2>
-        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'left' }}>
-          <div style={{ marginBottom: '24px' }}>
-            <h4 style={{ color: '#fff', marginBottom: '8px' }}>Is this free video to reel converter really free?</h4>
-            <p style={{ color: '#888' }}>Yes! The Viral Lab is built to empower creators to transmute their content without expensive subscription fees.</p>
-          </div>
-          <div style={{ marginBottom: '24px' }}>
-            <h4 style={{ color: '#fff', marginBottom: '8px' }}>How does the AI choose viral segments?</h4>
-            <p style={{ color: '#888' }}>We analyze audio sentiment, facial expressions, and visual energy to find "hooks" and "value bombs" that the algorithm loves.</p>
-          </div>
-        </div>
-      </section>
-
-      <footer style={{ marginTop: '100px', paddingBottom: '40px', borderTop: '1px solid var(--glass-border)', paddingTop: '40px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: '40px', color: '#444', fontSize: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Terminal size={14} />
-            <span>Local Alchemist Process: Ready</span>
-          </div>
-          <div>
-            Powered by <strong>Antigravity Engine</strong>
-          </div>
-        </div>
-        <p style={{ fontSize: '11px', color: '#333', maxWidth: '600px' }}>
-          Viral Lab is the premier AI Reel Maker for creators. Convert YouTube to Reels, Video to TikToks, and long-form to Shorts instantly. 
-          The alchemists are not responsible for sudden spikes in follower counts.
-        </p>
       </footer>
     </main>
   );
