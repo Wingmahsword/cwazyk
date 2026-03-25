@@ -82,14 +82,14 @@ export default function Home() {
             vps_score: 92, 
             title: "The Hidden Truth About Coding", 
             duration_seconds: 34,
-            video_url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" 
+            video_url: "/rickroll.mp4" 
           },
           { 
             reel_id: 2, 
             vps_score: 84, 
             title: "3 Tips for Viral Content", 
             duration_seconds: 41,
-            video_url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" 
+            video_url: "/rickroll.mp4" 
           }
         ]
       });
