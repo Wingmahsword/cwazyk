@@ -19,8 +19,9 @@ interface ReelResult {
   reel_id: number;
   vps_score: number;
   title: string;
+  description: string;
   duration_seconds: number;
-  video_id: string; // Using YouTube ID for speed
+  video_id: string;
 }
 
 interface ProcessResult {
@@ -71,7 +72,7 @@ export default function Home() {
 
       const steps = [20, 45, 75, 95, 100];
       for (const p of steps) {
-        await new Promise(r => setTimeout(r, 800)); // Faster simulation
+        await new Promise(r => setTimeout(r, 600)); 
         setProgress(p);
       }
 
@@ -80,14 +81,16 @@ export default function Home() {
           { 
             reel_id: 1, 
             vps_score: 98, 
-            title: "The Ultimate Rickroll Manifestation", 
+            title: "Viral Segment #01", 
+            description: "High-energy hook detected with strong emotional resonance.",
             duration_seconds: 15,
             video_id: "dQw4w9WgXcQ" 
           },
           { 
             reel_id: 2, 
             vps_score: 89, 
-            title: "Viral Gold: Never Gonna Give You Up", 
+            title: "Value Bomb #02", 
+            description: "Concise instructional segment with high retention potential.",
             duration_seconds: 15,
             video_id: "dQw4w9WgXcQ" 
           }
@@ -205,7 +208,8 @@ export default function Home() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <span style={{ fontSize: '10px', color: '#666' }}>VPS: {reel.vps_score}</span>
                   </div>
-                  <h3 style={{ fontSize: '0.9rem', marginBottom: '12px' }}>{reel.title}</h3>
+                  <h3 style={{ fontSize: '0.9rem', marginBottom: '4px' }}>{reel.title}</h3>
+                  <p style={{ fontSize: '0.75rem', color: '#888', marginBottom: '16px' }}>{reel.description}</p>
                   <button 
                     className="glow-btn" 
                     style={{ width: '100%', justifyContent: 'center', padding: '6px', fontSize: '12px' }}
