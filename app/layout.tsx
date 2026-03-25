@@ -23,14 +23,20 @@ export const metadata = {
   },
 };
 
+import { NoiseOverlay, ScanlineOverlay } from "@/components/InteractiveBuilder";
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-      <body>{children}</body>
+    <html lang="en">
+      <body className={outfit.variable}>
+        <NoiseOverlay />
+        <ScanlineOverlay />
+        {children}
+      </body>
     </html>
   );
 }
