@@ -19,6 +19,8 @@ const QUIRKY_MESSAGES = [
   "Extracting pure dopamine from your footage...",
   "Feeding the AI squirrels golden acorns...",
   "Polishing the subtitles with digital diamonds...",
+  "Consulting the viral gods for approval...",
+  "Baking the pixels at 420 degrees...",
 ];
 
 interface ReelResult {
@@ -26,8 +28,9 @@ interface ReelResult {
   vps_score: number;
   title: string;
   description: string;
-  duration_seconds: number;
+  duration_seconds?: number;
   video_id: string;
+  local_path?: string;
 }
 
 interface ProcessResult {
@@ -41,7 +44,10 @@ export default function Home() {
   const [msgIdx, setMsgIdx] = useState(0);
   const [result, setResult] = useState<ProcessResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  // Preview states
   const [previewId, setPreviewId] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -55,6 +61,15 @@ export default function Home() {
       if (interval) clearInterval(interval);
     };
   }, [isCooking]);
+
+  const downloadReel = (path: string, fileName: string) => {
+    const link = document.createElement("a");
+    link.href = `/api/video?path=${encodeURIComponent(path)}`;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const startCooking = async () => {
     if (!url) {
@@ -74,35 +89,43 @@ export default function Home() {
         body: JSON.stringify({ url }),
       });
 
-      if (!response.ok) throw new Error("Backend alchemist is unavailable");
+      if (!response.ok) throw new Error("Backend bridge failure. Ensure your local server is running.");
 
-      const steps = [20, 45, 75, 95, 100];
-      for (const p of steps) {
-        await new Promise(r => setTimeout(r, 600)); 
-        setProgress(p);
-      }
+      const { job_id } = await response.json();
+      console.log("🌉 Job registered:", job_id);
 
-      setResult({
-        reels: [
-          { 
-            reel_id: 1, 
-            vps_score: 98, 
-            title: "Viral Segment #01", 
-            description: "High-energy hook detected with strong emotional resonance.",
-            duration_seconds: 15,
-            video_id: "dQw4w9WgXcQ" 
-          },
-          { 
-            reel_id: 2, 
-            vps_score: 89, 
-            title: "Value Bomb #02", 
-            description: "Concise instructional segment with high retention potential.",
-            duration_seconds: 15,
-            video_id: "dQw4w9WgXcQ" 
+      // --- Polling Loop ---
+      let pollCount = 0;
+      const pollInterval = setInterval(async () => {
+        pollCount++;
+        // Simulate progress based on time while waiting
+        if (progress < 90) setProgress(prev => Math.min(prev + 2, 90));
+
+        try {
+          const statusRes = await fetch(`/api/status?id=${job_id}`);
+          const statusData = await statusRes.json();
+
+          if (statusData.status === "SUCCESS") {
+            clearInterval(pollInterval);
+            setProgress(100);
+            setResult({ reels: statusData.reels });
+            setIsCooking(false);
+          } else if (statusData.status === "ERROR") {
+            clearInterval(pollInterval);
+            throw new Error(statusData.error || "Generation failed");
           }
-        ]
-      });
-      setIsCooking(false);
+          
+          // Timeout after 10 minutes (120 polls of 5s)
+          if (pollCount > 120) {
+            clearInterval(pollInterval);
+            throw new Error("Transmulation timed out. Check your local worker terminal.");
+          }
+        } catch (err: any) {
+          clearInterval(pollInterval);
+          console.error("Polling error:", err);
+        }
+      }, 5000);
+
     } catch (err: any) {
       setError(err.message || "Failed to manifest reels.");
       setIsCooking(false);
@@ -111,18 +134,18 @@ export default function Home() {
 
   return (
     <main className="min-h-screen relative overflow-hidden flex flex-col items-center">
-      <NavFixed />
+      <NavFixed logo="VIRAL LAB" />
       <ReactiveBackground opacity={0.3} />
 
       {/* Seamless Video Preview Modal */}
       <AnimatePresence>
-        {previewId && (
+        {(previewId || previewUrl) && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[2000] bg-black/95 flex items-center justify-center p-5 md:p-10 backdrop-blur-xl"
-            onClick={() => setPreviewId(null)}
+            onClick={() => { setPreviewId(null); setPreviewUrl(null); }}
           >
             <motion.div 
               initial={{ scale: 0.9, y: 30 }}
@@ -131,18 +154,27 @@ export default function Home() {
               className="w-full max-w-[400px] aspect-[9/16] bg-black rounded-[32px] overflow-hidden shadow-[0_0_100px_rgba(255,45,106,0.3)] relative"
               onClick={(e) => e.stopPropagation()}
             >
-              <iframe 
-                width="100%" 
-                height="100%" 
-                src={`https://www.youtube.com/embed/${previewId}?autoplay=1&controls=0&start=0&end=15`} 
-                title="Rickroll Preview"
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowFullScreen
-                style={{ border: 'none' }}
-              ></iframe>
+              {previewUrl ? (
+                <video 
+                  src={previewUrl} 
+                  controls 
+                  autoPlay 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  src={`https://www.youtube.com/embed/${previewId}?autoplay=1&controls=0&start=0&end=15`} 
+                  title="Video Preview"
+                  frameBorder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                  style={{ border: 'none' }}
+                />
+              )}
               <button 
-                onClick={() => setPreviewId(null)}
+                onClick={() => { setPreviewId(null); setPreviewUrl(null); }}
                 className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-white z-[2001]"
               >
                 ✕
@@ -196,10 +228,9 @@ export default function Home() {
               </motion.div>
               <div className="w-full h-[1px] bg-white/10 mt-10 relative overflow-hidden">
                 <motion.div 
-                  initial={{ left: '-100%' }} 
-                  animate={{ left: `${progress}%` }}
-                  className="absolute top-0 bottom-0 left-0 bg-[#ff2d6a] transition-all duration-500"
-                  style={{ width: '100%' }}
+                  initial={{ width: '0%' }} 
+                  animate={{ width: `${progress}%` }}
+                  className="h-full bg-[#ff2d6a] transition-all duration-500"
                 />
               </div>
               <AnimatePresence mode="wait">
@@ -218,13 +249,20 @@ export default function Home() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <div className="meta-mono text-gold mb-10">Manifestation Successful</div>
               <EditorialGrid>
-                {result.reels.map((reel) => (
+                {result.reels.map((reel: any) => (
                   <EditorialCard 
                     key={reel.reel_id}
                     title={reel.title}
                     vps={reel.vps_score}
                     description={reel.description}
-                    onClick={() => setPreviewId(reel.video_id)}
+                    onClick={() => {
+                      if (reel.local_path) {
+                        setPreviewUrl(`/api/video?path=${encodeURIComponent(reel.local_path)}`);
+                      } else {
+                        setPreviewId(reel.video_id);
+                      }
+                    }}
+                    onDownload={reel.local_path ? () => downloadReel(reel.local_path, `reel_${reel.reel_id}.mp4`) : undefined}
                   />
                 ))}
               </EditorialGrid>

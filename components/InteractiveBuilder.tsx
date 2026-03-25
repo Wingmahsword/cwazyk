@@ -15,7 +15,12 @@ export function ScanlineOverlay() {
   return <div className="scanline-overlay" />;
 }
 
-export function ReactiveBackground({ lineCount = 8, opacity = 0.15 }) {
+interface ReactiveBackgroundProps {
+  lineCount?: number;
+  opacity?: number;
+}
+
+export function ReactiveBackground({ lineCount = 8, opacity = 0.15 }: ReactiveBackgroundProps) {
   const [mousePos, setMousePos] = useState({ x: 500, y: 500 });
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -65,7 +70,11 @@ export function ReactiveBackground({ lineCount = 8, opacity = 0.15 }) {
 // 📰 GRIDS & CARDS
 // ============================================
 
-export function EditorialGrid({ children }) {
+interface EditorialGridProps {
+  children: React.ReactNode;
+}
+
+export function EditorialGrid({ children }: EditorialGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-24">
       {children}
@@ -73,17 +82,33 @@ export function EditorialGrid({ children }) {
   );
 }
 
-export function EditorialCard({ title, vps, description, onClick }) {
+interface EditorialCardProps {
+  title: string;
+  vps: number | string;
+  description: string;
+  onClick: () => void;
+  onDownload?: () => void;
+}
+
+export function EditorialCard({ title, vps, description, onClick, onDownload }: EditorialCardProps) {
   return (
     <motion.div 
       whileHover={{ y: -10 }}
-      onClick={onClick}
       className="glass group cursor-pointer relative overflow-hidden text-left"
     >
-      <div className="aspect-[9/16] relative overflow-hidden bg-black/40">
+      <div className="aspect-[9/16] relative overflow-hidden bg-black/40" onClick={onClick}>
         <div className="absolute inset-0 flex flex-col justify-end p-8 bg-gradient-to-t from-black via-black/40 to-transparent">
           <div className="flex justify-between items-center mb-4">
             <span className="meta-mono text-gold">VPS: {vps}%</span>
+            {onDownload && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); onDownload(); }}
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-gold hover:text-black transition-all flex items-center justify-center backdrop-blur-md"
+                title="Download Reel"
+              >
+                ↓
+              </button>
+            )}
           </div>
           <h3 className="subtitle-stretched text-xl md:text-2xl mb-2">{title}</h3>
           <p className="text-xs opacity-0 group-hover:opacity-60 transition-opacity duration-300 line-clamp-2">
@@ -105,7 +130,11 @@ export function EditorialCard({ title, vps, description, onClick }) {
 // 🎯 NAVIGATION
 // ============================================
 
-export function NavFixed({ logo = "VIRAL LAB" }) {
+interface NavFixedProps {
+  logo?: string;
+}
+
+export function NavFixed({ logo = "VIRAL LAB" }: NavFixedProps) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-[1000] px-10 py-8 flex justify-between items-center mix-blend-difference pointer-events-auto">
       <h1 className="font-editorial text-2xl font-black italic tracking-tighter text-white">

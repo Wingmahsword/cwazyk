@@ -1,37 +1,27 @@
-:root {
-  --bg: #09090b;
-  --fg: #fafafa;
-  --primary: #3b82f6;
-  --primary-glow: #3b82f633;
-  --accent: #8b5cf6;
-  --accent-glow: #8b5cf633;
-  --success: #10b981;
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --font: 'Outfit', 'Inter', -apple-system, sans-serif;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--font);
-  min-height: 100vh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-/*
-  PREMIUM VIRAL LAB DESIGN SYSTEM
-  Based on Loveble Editorial (032c | T-Magazine | DIA Studio)
-*/
-
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Inter:wght@100;300;400;700;900&family=JetBrains+Mono:wght@100;300;400;700&display=swap');
+
+:root {
+    /* === DESIGN TOKENS === */
+    --brutal-bg: #000000;
+    --brutal-surface: #0a0a0a;
+    --brutal-text: #ffffff;
+    --brutal-accent: #ff2d6a; /* Viral Lab Pink */
+    --brutal-dim: rgba(255, 255, 255, 0.4);
+    --brutal-muted: rgba(255, 255, 255, 0.1);
+
+    --gothic-gold: #c5a059;
+    --gothic-mist: rgba(255, 255, 255, 0.05);
+
+    --font-display: 'Cinzel', serif;
+    --font-editorial: 'Playfair Display', serif;
+    --font-sans: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --kinetic-transition: cubic-bezier(0.22, 1, 0.36, 1);
+    --z-background: -1;
+    --z-content: 1;
+    --z-overlay: 1000;
+}
 
 :root {
     /* === DESIGN TOKENS === */
