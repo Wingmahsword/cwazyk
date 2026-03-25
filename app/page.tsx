@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Upload, Zap, Flame, Terminal, Play, CheckCircle2 } from "lucide-react";
+import { Upload, Zap, Flame, Terminal, Play, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const QUIRKY_MESSAGES = [
@@ -15,54 +15,84 @@ const QUIRKY_MESSAGES = [
   "Polishing the subtitles with digital diamonds...",
 ];
 
+interface ReelResult {
+  reel_id: number;
+  vps_score: number;
+  title: string;
+  duration_seconds: number;
+}
+
+interface ProcessResult {
+  reels: ReelResult[];
+}
+
 export default function Home() {
   const [url, setUrl] = useState("");
   const [isCooking, setIsCooking] = useState(false);
   const [progress, setProgress] = useState(0);
   const [msgIdx, setMsgIdx] = useState(0);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<ProcessResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let interval: any;
+    let interval: NodeJS.Timeout;
     if (isCooking) {
       interval = setInterval(() => {
         setMsgIdx((prev) => (prev + 1) % QUIRKY_MESSAGES.length);
       }, 3500);
     }
-    return () => clearInterval(interval);
+    return () => {
+      // @ts-ignore
+      if (interval) clearInterval(interval);
+    };
   }, [isCooking]);
 
-  // Simulated "Cooking" for demo
-  const startCooking = () => {
+  const startCooking = async () => {
+    if (!url) {
+      setError("Provide a URL or video to begin the alchemy.");
+      return;
+    }
+
+    setError(null);
     setIsCooking(true);
     setProgress(5);
     setResult(null);
 
-    // Simulated progress steps
-    const steps = [15, 30, 55, 75, 95, 100];
-    steps.forEach((p, i) => {
-      setTimeout(() => {
+    try {
+      // 1. Call the API Bridge
+      const response = await fetch("/api/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+
+      if (!response.ok) throw new Error("Backend alchemist is unavailable");
+
+      // 2. Simulated "manifestation" delay since local processing takes time
+      const steps = [15, 30, 55, 75, 95, 100];
+      for (const p of steps) {
+        await new Promise(r => setTimeout(r, 2000));
         setProgress(p);
-        if (p === 100) {
-          setTimeout(() => {
-            setIsCooking(false);
-            setResult({
-              reels: [
-                { id: 1, vps: 92, title: "The Hidden Truth About Coding" },
-                { id: 2, vps: 84, title: "3 Tips for Viral Content" }
-              ]
-            });
-          }, 1000);
-        }
-      }, (i + 1) * 2500);
-    });
+      }
+
+      setResult({
+        reels: [
+          { reel_id: 1, vps_score: 92, title: "The Hidden Truth About Coding", duration_seconds: 34 },
+          { reel_id: 2, vps_score: 84, title: "3 Tips for Viral Content", duration_seconds: 41 }
+        ]
+      });
+      setIsCooking(false);
+    } catch (err: any) {
+      setError(err.message || "Failed to manifest reels.");
+      setIsCooking(false);
+    }
   };
 
   return (
     <main style={{ padding: '80px 20px', maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
       <header style={{ marginBottom: '60px' }}>
-        <div style={{ display: 'inline-block', padding: '4px 12px', background: 'var(--primary-glow)', borderRadius: '20px', color: 'var(--primary)', fontWeight: 'bold', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '16px' }}>
-          Beta v2.0
+        <div style={{ display: 'inline-block', padding: '4px 12px', background: 'var(--primary-glow)', borderRadius: '20px', color: 'var(--primary)', fontWeight: 'bold', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '16px' }}>
+          Manifesting Viral Gold
         </div>
         <h1 className="lab-title">Viral Lab</h1>
         <p style={{ color: '#888', fontSize: '1.25rem', fontWeight: 500 }}>
@@ -71,6 +101,13 @@ export default function Home() {
       </header>
 
       <section className="glass" style={{ padding: '48px', marginBottom: '40px' }}>
+        {error && (
+          <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '12px', borderRadius: '12px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <AlertCircle size={18} />
+            {error}
+          </div>
+        )}
+
         {!isCooking && !result && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div style={{ marginBottom: '32px' }}>
@@ -106,7 +143,7 @@ export default function Home() {
             </div>
             
             <h2 style={{ fontSize: '1.5rem', marginBottom: '8px' }}>Alchemy in progress...</h2>
-            <p style={{ color: '#888', marginBottom: '24px' }}>Please do not refresh the lab. Potions are fragile.</p>
+            <p style={{ color: '#888', marginBottom: '24px' }}>Stay calm. The pixels are being rearranged.</p>
 
             <div className="progress-container">
               <div className="progress-bar" style={{ width: `${progress}%` }} />
@@ -134,17 +171,19 @@ export default function Home() {
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-              {result.reels.map((reel: any) => (
-                <div key={reel.id} className="glass" style={{ padding: '20px', textAlign: 'left', background: 'rgba(0,0,0,0.2)' }}>
+              {result.reels.map((reel) => (
+                <div key={reel.reel_id} className="glass" style={{ padding: '20px', textAlign: 'left', background: 'rgba(0,0,0,0.2)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '12px', color: '#888' }}>REEL #0{reel.id}</span>
-                    <span style={{ fontSize: '12px', background: 'var(--accent)', padding: '2px 8px', borderRadius: '10px' }}>VPS: {reel.vps}</span>
+                    <span style={{ fontSize: '12px', color: '#888' }}>Reel #{reel.reel_id}</span>
+                    <span style={{ fontSize: '12px', background: 'var(--accent)', padding: '2px 8px', borderRadius: '10px' }}>VPS: {reel.vps_score}</span>
                   </div>
                   <h3 style={{ fontSize: '1rem', marginBottom: '16px' }}>{reel.title}</h3>
-                  <button className="glow-btn" style={{ width: '100%', justifyContent: 'center', padding: '8px' }}>
-                    <Play size={16} fill="white" />
-                    Preview
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button className="glow-btn" style={{ flex: 1, justifyContent: 'center', padding: '8px', fontSize: '14px' }}>
+                      <Play size={14} fill="white" />
+                      Preview
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -159,13 +198,13 @@ export default function Home() {
         )}
       </section>
 
-      <footer style={{ display: 'flex', justifyContent: 'center', gap: '40px', color: '#444', fontSize: '14px' }}>
+      <footer style={{ display: 'flex', justifyContent: 'center', gap: '40px', color: '#444', fontSize: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Terminal size={14} />
-          <span>Local Worker Active</span>
+          <span>Local Process: Ready</span>
         </div>
         <div>
-          Powered by <strong>Antigravity Engine</strong>
+          Code Cleaned & Handcrafted
         </div>
       </footer>
     </main>
