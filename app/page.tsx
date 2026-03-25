@@ -109,14 +109,35 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.9)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+            style={{ 
+              position: 'fixed' as 'fixed', 
+              top: 0, 
+              left: 0, 
+              width: '100%', 
+              height: '100%', 
+              background: 'rgba(0,0,0,0.9)', 
+              zIndex: 100, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              padding: '20px' 
+            }}
             onClick={() => setPreviewUrl(null)}
           >
             <motion.div 
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              style={{ width: '100%', maxWidth: '400px', aspectRatio: '9/16', background: '#000', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 0 50px rgba(0,0,0,0.5)', position: 'relative' }}
+              style={{ 
+                width: '100%', 
+                maxWidth: '400px', 
+                aspectRatio: '9/16', 
+                background: '#000', 
+                borderRadius: '24px', 
+                overflow: 'hidden', 
+                boxShadow: '0 0 50px rgba(0,0,0,0.5)', 
+                position: 'relative' as 'relative' 
+              }}
               onClick={(e) => e.stopPropagation()}
             >
               <video 
