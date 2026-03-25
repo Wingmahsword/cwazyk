@@ -1,3 +1,9 @@
+import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+
+const RESULTS_PATH = path.join(process.cwd(), "..", "viral-reel-maker", "results.json");
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
@@ -5,7 +11,7 @@ export async function GET(req: Request) {
   if (!id) return NextResponse.json({ error: "Missing job ID" }, { status: 400 });
 
   // 🛑 VERCEL PRODUCTION SAFETY: Return mock for production demo
-  if (process.env.VERCEL || id === "demo_job") {
+  if (process.env.VERCEL || id === "demo_job" || id === "test_trial") {
     return NextResponse.json({
       status: "SUCCESS",
       reels: [
@@ -41,6 +47,7 @@ export async function GET(req: Request) {
     });
 
   } catch (error) {
+    console.error("Status check fail:", error);
     return NextResponse.json({ status: "ERROR", error: "Failed to read results" }, { status: 500 });
   }
 }
